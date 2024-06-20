@@ -1,0 +1,89 @@
+type EventsSummary {
+  id: ID!
+  oRMP_HashImported: [ORMP_HashImported!]! @derivedFrom(field: "eventsSummary")
+  oRMP_HashImportedCount: BigInt!
+  oRMP_MessageAccepted: [ORMP_MessageAccepted!]! @derivedFrom(field: "eventsSummary")
+  oRMP_MessageAcceptedCount: BigInt!
+  oRMP_MessageAssigned: [ORMP_MessageAssigned!]! @derivedFrom(field: "eventsSummary")
+  oRMP_MessageAssignedCount: BigInt!
+  oRMP_MessageDispatched: [ORMP_MessageDispatched!]! @derivedFrom(field: "eventsSummary")
+  oRMP_MessageDispatchedCount: BigInt!
+  oRMPUpgradeablePort_MessageRecv: [ORMPUpgradeablePort_MessageRecv!]! @derivedFrom(field: "eventsSummary")
+  oRMPUpgradeablePort_MessageRecvCount: BigInt!
+  oRMPUpgradeablePort_MessageSent: [ORMPUpgradeablePort_MessageSent!]! @derivedFrom(field: "eventsSummary")
+  oRMPUpgradeablePort_MessageSentCount: BigInt!
+  signaturePub_SignatureSubmittion: [SignaturePub_SignatureSubmittion!]! @derivedFrom(field: "eventsSummary")
+  signaturePub_SignatureSubmittionCount: BigInt!
+}
+
+type ORMP_HashImported {
+  id: ID!
+  oracle: String!
+  chainId: BigInt!
+  channel: String!
+  msgIndex: BigInt!
+  hash: String!
+  eventsSummary: String!
+}
+
+type ORMP_MessageAccepted {
+  id: ID!
+  msgHash: String!
+  message_0: String!
+  message_1: BigInt!
+  message_2: BigInt!
+  message_3: String!
+  message_4: BigInt!
+  message_5: String!
+  message_6: BigInt!
+  message_7: String!
+  eventsSummary: String!
+}
+
+type ORMP_MessageAssigned {
+  id: ID!
+  msgHash: String!
+  oracle: String!
+  relayer: String!
+  oracleFee: BigInt!
+  relayerFee: BigInt!
+  params: String!
+  eventsSummary: String!
+}
+
+type ORMP_MessageDispatched {
+  id: ID!
+  msgHash: String!
+  dispatchResult: Boolean!
+  eventsSummary: String!
+}
+
+type ORMPUpgradeablePort_MessageRecv {
+  id: ID!
+  msgId: String!
+  result: Boolean!
+  returnData: String!
+  eventsSummary: String!
+}
+
+type ORMPUpgradeablePort_MessageSent {
+  id: ID!
+  msgId: String!
+  fromDapp: String!
+  toChainId: BigInt!
+  toDapp: String!
+  message: String!
+  params: String!
+  eventsSummary: String!
+}
+
+type SignaturePub_SignatureSubmittion {
+  id: ID!
+  chainId: BigInt!
+  channel: String!
+  signer: String!
+  msgIndex: BigInt!
+  signature: String!
+  data: String!
+  eventsSummary: String!
+}
