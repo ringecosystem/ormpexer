@@ -87,3 +87,39 @@ type SignaturePub_SignatureSubmittion {
   data: String!
   eventsSummary: String!
 }
+
+## custom
+
+type MessageProgress {
+  id: ID!
+  total: BigInt!
+  inflight: BigInt!
+}
+
+type MessageFull {
+  id: ID!
+  protocol: String!
+  payload: String
+  params: String
+  status: Int! # 0: inflight, 1: success, 2: failed
+
+  # source
+  sourceChainId: BigInt
+  sourceBlockNumber: BigInt
+  sourceBlockTimestamp: BigInt
+  sourceTransactionHash: String
+  sourceTransactionIndex: Int
+  sourceLogIndex: Int
+  sourceDappAddress: String
+  sourcePortAddress: String
+
+  #target
+  targetChainId: BigInt
+  targetBlockNumber: BigInt
+  targetBlockTimestamp: BigInt
+  targetTransactionHash: String
+  targetTransactionIndex: Int
+  targetLogIndex: Int
+  targetDappAddress: String
+  targetPortAddress: String
+}
