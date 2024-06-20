@@ -29,14 +29,14 @@ type ORMP_HashImported {
 type ORMP_MessageAccepted {
   id: ID!
   msgHash: String!
-  message_0: String!
-  message_1: BigInt!
-  message_2: BigInt!
-  message_3: String!
-  message_4: BigInt!
-  message_5: String!
-  message_6: BigInt!
-  message_7: String!
+  channel: String!
+  index: BigInt!
+  fromChainId: BigInt!
+  from: String!
+  toChainId: BigInt!
+  to: String!
+  gasLimit: BigInt!
+  encoded: String!
   eventsSummary: String!
 }
 
