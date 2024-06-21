@@ -67,7 +67,7 @@ ORMPUpgradeablePortContract.MessageRecv.handler(({event, context}) => {
     const nextMessageProgress = {
       id: mpId,
       total: currentMessageProgress.total,
-      inflight: currentMessageProgress.inflight + 1,
+      inflight: currentMessageProgress.inflight + 1n,
     };
     context.MessageProgress.set(nextMessageProgress);
   }
@@ -138,8 +138,8 @@ ORMPUpgradeablePortContract.MessageSent.handler(({event, context}) => {
   const currentMessageProgress: MessageProgressEntity = messageProgress ?? INITIAL_MESSAGE_PROGRESS;
   const nextMessageProgress = {
     id: mpId,
-    total: currentMessageProgress.total + 1,
-    inflight: currentMessageProgress.inflight + 1,
+    total: currentMessageProgress.total + 1n,
+    inflight: currentMessageProgress.inflight + 1n,
   };
   context.MessageProgress.set(nextMessageProgress);
 
