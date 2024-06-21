@@ -1,0 +1,151 @@
+type EventsSummary {
+  id: ID!
+  oRMP_HashImported: [ORMP_HashImported!]! @derivedFrom(field: "eventsSummary")
+  oRMP_HashImportedCount: BigInt!
+  oRMP_MessageAccepted: [ORMP_MessageAccepted!]! @derivedFrom(field: "eventsSummary")
+  oRMP_MessageAcceptedCount: BigInt!
+  oRMP_MessageAssigned: [ORMP_MessageAssigned!]! @derivedFrom(field: "eventsSummary")
+  oRMP_MessageAssignedCount: BigInt!
+  oRMP_MessageDispatched: [ORMP_MessageDispatched!]! @derivedFrom(field: "eventsSummary")
+  oRMP_MessageDispatchedCount: BigInt!
+  oRMPUpgradeablePort_MessageRecv: [ORMPUpgradeablePort_MessageRecv!]! @derivedFrom(field: "eventsSummary")
+  oRMPUpgradeablePort_MessageRecvCount: BigInt!
+  oRMPUpgradeablePort_MessageSent: [ORMPUpgradeablePort_MessageSent!]! @derivedFrom(field: "eventsSummary")
+  oRMPUpgradeablePort_MessageSentCount: BigInt!
+  signaturePub_SignatureSubmittion: [SignaturePub_SignatureSubmittion!]! @derivedFrom(field: "eventsSummary")
+  signaturePub_SignatureSubmittionCount: BigInt!
+}
+
+type ORMP_HashImported {
+  id: ID!
+  blockNumber: BigInt!
+  transactionHash: String!
+
+  srcChainId: BigInt!
+  targetChainId: BigInt!
+  oracle: String!
+  channel: String!
+  msgIndex: BigInt!
+  hash: String!
+  eventsSummary: String!
+}
+
+type ORMP_MessageAccepted {
+  id: ID!
+  blockNumber: BigInt!
+  transactionHash: String!
+  msgHash: String!
+  channel: String!
+  index: BigInt!
+  fromChainId: BigInt!
+  from: String!
+  toChainId: BigInt!
+  to: String!
+  gasLimit: BigInt!
+  encoded: String!
+  eventsSummary: String!
+
+  # extra
+  oracle: String
+  oracleAssigned: Boolean
+  oracleAssignedFee: BigInt
+
+  relayer: String
+  relayerAssigned: Boolean
+  relayerAssignedFee: BigInt
+}
+
+type ORMP_MessageAssigned {
+  id: ID!
+  blockNumber: BigInt!
+  transactionHash: String!
+  msgHash: String!
+  oracle: String!
+  relayer: String!
+  oracleFee: BigInt!
+  relayerFee: BigInt!
+  params: String!
+  eventsSummary: String!
+}
+
+type ORMP_MessageDispatched {
+  id: ID!
+  targetChainId: BigInt!
+  blockNumber: BigInt!
+  transactionHash: String!
+  msgHash: String!
+  dispatchResult: Boolean!
+  eventsSummary: String!
+}
+
+type ORMPUpgradeablePort_MessageRecv {
+  id: ID!
+  blockNumber: BigInt!
+  transactionHash: String!
+  msgId: String!
+  result: Boolean!
+  returnData: String!
+  eventsSummary: String!
+}
+
+type ORMPUpgradeablePort_MessageSent {
+  id: ID!
+  blockNumber: BigInt!
+  transactionHash: String!
+  msgId: String!
+  fromDapp: String!
+  toChainId: BigInt!
+  toDapp: String!
+  message: String!
+  params: String!
+  eventsSummary: String!
+}
+
+type SignaturePub_SignatureSubmittion {
+  id: ID!
+  blockNumber: BigInt!
+  transactionHash: String!
+  chainId: BigInt!
+  channel: String!
+  signer: String!
+  msgIndex: BigInt!
+  signature: String!
+  data: String!
+  eventsSummary: String!
+}
+
+## custom
+
+type MessageProgress {
+  id: ID!
+  total: BigInt!
+  inflight: BigInt!
+}
+
+type MessageFull {
+  id: ID!
+  protocol: String!
+  payload: String
+  params: String
+  status: Int! # 0: inflight, 1: success, 2: failed
+
+  # source
+  sourceChainId: BigInt
+  sourceBlockNumber: BigInt
+  sourceBlockTimestamp: BigInt
+  sourceTransactionHash: String
+  sourceTransactionIndex: Int
+  sourceLogIndex: Int
+  sourceDappAddress: String
+  sourcePortAddress: String
+
+  #target
+  targetChainId: BigInt
+  targetBlockNumber: BigInt
+  targetBlockTimestamp: BigInt
+  targetTransactionHash: String
+  targetTransactionIndex: Int
+  targetLogIndex: Int
+  targetDappAddress: String
+  targetPortAddress: String
+}

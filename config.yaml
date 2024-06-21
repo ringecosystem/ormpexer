@@ -1,0 +1,171 @@
+name: ormpexer
+contracts:
+  - name: ORMP
+    handler: src/EventHandlers.ts
+    events:
+      - event: HashImported(address indexed oracle, uint256 chainId, address channel, uint256 msgIndex, bytes32 hash)
+      - event: MessageAccepted(bytes32 indexed msgHash, (address,uint256,uint256,address,uint256,address,uint256,bytes) message)
+      - event: MessageAssigned(bytes32 indexed msgHash, address indexed oracle, address indexed relayer, uint256 oracleFee, uint256 relayerFee, bytes params)
+      - event: MessageDispatched(bytes32 indexed msgHash, bool dispatchResult)
+  - name: ORMPUpgradeablePort
+    handler: src/EventHandlers.ts
+    events:
+      - event: MessageRecv(bytes32 indexed msgId, bool result, bytes returnData)
+      - event: MessageSent(bytes32 indexed msgId, address fromDapp, uint256 toChainId, address toDapp, bytes message, bytes params)
+networks:
+  - id: 1 # ethereum
+    start_block: 20009605
+    end_block: null
+    contracts:
+      - name: ORMPUpgradeablePort
+        address:
+          - 0x2cd1867Fb8016f93710B6386f7f9F1D540A60812
+      - name: ORMP
+        address:
+          - 0x13b2211a7cA45Db2808F6dB05557ce5347e3634e
+  - id: 44 # crab
+    start_block: 2900650
+    end_block: null
+    contracts:
+      - name: ORMPUpgradeablePort
+        address:
+          - 0x2cd1867Fb8016f93710B6386f7f9F1D540A60812
+      - name: ORMP
+        address:
+          - 0x13b2211a7cA45Db2808F6dB05557ce5347e3634e
+  - id: 45 # pangoro
+    rpc_config:
+      url: https://fraa-flashbox-2871-rpc.a.stagenet.tanssi.network
+    start_block: 229000
+    end_block: null
+    contracts:
+      - name: ORMPUpgradeablePort
+        address:
+          - 0x2cd1867Fb8016f93710B6386f7f9F1D540A60812
+      - name: ORMP
+        address:
+          - 0x13b2211a7cA45Db2808F6dB05557ce5347e3634e
+  - id: 46 # darwinia
+    start_block: 2830148
+    end_block: null
+    contracts:
+      - name: ORMPUpgradeablePort
+        address:
+          - 0x2cd1867Fb8016f93710B6386f7f9F1D540A60812
+      - name: ORMP
+        address:
+          - 0x13b2211a7cA45Db2808F6dB05557ce5347e3634e
+      - name: SignaturePub
+        address:
+          - 0x57Aa601A0377f5AB313C5A955ee874f5D495fC92
+        handler: src/EventHandlers.ts
+        events:
+          - event: SignatureSubmittion(uint256 indexed chainId, address indexed channel, address indexed signer, uint256 msgIndex, bytes signature, bytes data)
+#  - id: 137 # polygon
+#    start_block: 57711531
+#    end_block: null
+#    contracts:
+#      - name: ORMPUpgradeablePort
+#        address:
+#          - 0x2cd1867Fb8016f93710B6386f7f9F1D540A60812
+#      - name: ORMP
+#        address:
+#          - 0x13b2211a7cA45Db2808F6dB05557ce5347e3634e
+  - id: 701 # koi
+    rpc_config:
+      url: https://koi-rpc.darwinia.network
+    start_block: 97272
+    end_block: null
+    contracts:
+      - name: ORMPUpgradeablePort
+        address:
+          - 0x2cd1867Fb8016f93710B6386f7f9F1D540A60812
+      - name: ORMP
+        address:
+          - 0x13b2211a7cA45Db2808F6dB05557ce5347e3634e
+  - id: 1284 # moonbean
+    start_block: 6294321
+    end_block: null
+    contracts:
+      - name: ORMPUpgradeablePort
+        address:
+          - 0x2cd1867Fb8016f93710B6386f7f9F1D540A60812
+      - name: ORMP
+        address:
+          - 0x13b2211a7cA45Db2808F6dB05557ce5347e3634e
+  - id: 42161 # arbitrum
+    start_block: 217896912
+    end_block: null
+    contracts:
+      - name: ORMPUpgradeablePort
+        address:
+          - 0x2cd1867Fb8016f93710B6386f7f9F1D540A60812
+      - name: ORMP
+        address:
+          - 0x13b2211a7cA45Db2808F6dB05557ce5347e3634e
+  - id: 81457 # blast
+    start_block: 4293849
+    end_block: null
+    contracts:
+      - name: ORMPUpgradeablePort
+        address:
+          - 0x2cd1867Fb8016f93710B6386f7f9F1D540A60812
+      - name: ORMP
+        address:
+          - 0x13b2211a7cA45Db2808F6dB05557ce5347e3634e
+  - id: 167009 # hekala-taiko
+    rpc_config:
+      url: https://rpc.hekla.taiko.xyz
+    start_block: 311800
+    end_block: null
+    contracts:
+      - name: ORMPUpgradeablePort
+        address:
+          - 0x2cd1867Fb8016f93710B6386f7f9F1D540A60812
+      - name: ORMP
+        address:
+          - 0x13b2211a7cA45Db2808F6dB05557ce5347e3634e
+  - id: 421614 # arbitrum-sepolia
+    start_block: 53486700
+    end_block: null
+    contracts:
+      - name: ORMPUpgradeablePort
+        address:
+          - 0x2cd1867Fb8016f93710B6386f7f9F1D540A60812
+      - name: ORMP
+        address:
+          - 0x13b2211a7cA45Db2808F6dB05557ce5347e3634e
+  - id: 11155111 # sepolia
+    start_block: 6083800
+    end_block: null
+    contracts:
+      - name: ORMPUpgradeablePort
+        address:
+          - 0x2cd1867Fb8016f93710B6386f7f9F1D540A60812
+      - name: ORMP
+        address:
+          - 0x13b2211a7cA45Db2808F6dB05557ce5347e3634e
+  - id: 728126428 # tron
+    rpc_config:
+      url: https://api.trongrid.io/jsonrpc
+    start_block: 62251337
+    end_block: null
+    contracts:
+      - name: ORMPUpgradeablePort
+        address:
+          - 0x3Bc5362EC3a3DBc07292aEd4ef18Be18De02DA3a
+      - name: ORMP
+        address:
+          - 0x5C5c383FEbE62F377F8c0eA1de97F2a2Ba102e98
+  - id: 123456 # 2494104990 tron-shasta
+    rpc_config:
+      url: https://api.shasta.trongrid.io/jsonrpc
+    start_block: 44847100
+    end_block: null
+    contracts:
+      - name: ORMPUpgradeablePort
+        address:
+          - 0x9a80B8a27Ea73BD584336C9c200bb97190865482
+      - name: ORMP
+        address:
+          - 0x841B6b2F3148131Ac161d88edFb2C11F146e189F
