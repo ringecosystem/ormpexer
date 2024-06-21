@@ -19,6 +19,8 @@ SignaturePubContract.SignatureSubmittion.handler(({event, context}) => {
 
   const signaturePub_SignatureSubmittionEntity: SignaturePub_SignatureSubmittionEntity = {
     id: event.transactionHash + event.logIndex.toString(),
+    blockNumber: BigInt(event.blockNumber),
+    transactionHash: event.transactionHash,
     chainId: event.params.chainId,
     channel: event.params.channel,
     signer: event.params.signer,

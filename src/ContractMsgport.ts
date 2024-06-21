@@ -1,5 +1,6 @@
 import {
-  EventsSummaryEntity, MessageFullEntity, MessageProgressEntity,
+  EventsSummaryEntity,
+  MessageProgressEntity,
   ORMPUpgradeablePort_MessageRecvEntity,
   ORMPUpgradeablePort_MessageSentEntity,
   ORMPUpgradeablePortContract,
@@ -25,6 +26,8 @@ ORMPUpgradeablePortContract.MessageRecv.handler(({event, context}) => {
   const msgId = event.params.msgId;
   const oRMPUpgradeablePort_MessageRecvEntity: ORMPUpgradeablePort_MessageRecvEntity = {
     id: event.transactionHash + event.logIndex.toString(),
+    blockNumber: BigInt(event.blockNumber),
+    transactionHash: event.transactionHash,
     msgId: msgId,
     result: event.params.result,
     returnData: event.params.returnData,
@@ -89,6 +92,8 @@ ORMPUpgradeablePortContract.MessageSent.handler(({event, context}) => {
   const msgId = event.params.msgId;
   const oRMPUpgradeablePort_MessageSentEntity: ORMPUpgradeablePort_MessageSentEntity = {
     id: event.transactionHash + event.logIndex.toString(),
+    blockNumber: BigInt(event.blockNumber),
+    transactionHash: event.transactionHash,
     msgId: msgId,
     fromDapp: event.params.fromDapp,
     toChainId: event.params.toChainId,

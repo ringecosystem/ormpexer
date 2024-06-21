@@ -18,8 +18,12 @@ type EventsSummary {
 
 type ORMP_HashImported {
   id: ID!
+  blockNumber: BigInt!
+  transactionHash: String!
+
+  srcChainId: BigInt!
+  targetChainId: BigInt!
   oracle: String!
-  chainId: BigInt!
   channel: String!
   msgIndex: BigInt!
   hash: String!
@@ -28,6 +32,8 @@ type ORMP_HashImported {
 
 type ORMP_MessageAccepted {
   id: ID!
+  blockNumber: BigInt!
+  transactionHash: String!
   msgHash: String!
   channel: String!
   index: BigInt!
@@ -38,10 +44,21 @@ type ORMP_MessageAccepted {
   gasLimit: BigInt!
   encoded: String!
   eventsSummary: String!
+
+  # extra
+  oracle: String
+  oracleAssigned: Boolean
+  oracleAssignedFee: BigInt
+
+  relayer: String
+  relayerAssigned: Boolean
+  relayerAssignedFee: BigInt
 }
 
 type ORMP_MessageAssigned {
   id: ID!
+  blockNumber: BigInt!
+  transactionHash: String!
   msgHash: String!
   oracle: String!
   relayer: String!
@@ -53,6 +70,9 @@ type ORMP_MessageAssigned {
 
 type ORMP_MessageDispatched {
   id: ID!
+  targetChainId: BigInt!
+  blockNumber: BigInt!
+  transactionHash: String!
   msgHash: String!
   dispatchResult: Boolean!
   eventsSummary: String!
@@ -60,6 +80,8 @@ type ORMP_MessageDispatched {
 
 type ORMPUpgradeablePort_MessageRecv {
   id: ID!
+  blockNumber: BigInt!
+  transactionHash: String!
   msgId: String!
   result: Boolean!
   returnData: String!
@@ -68,6 +90,8 @@ type ORMPUpgradeablePort_MessageRecv {
 
 type ORMPUpgradeablePort_MessageSent {
   id: ID!
+  blockNumber: BigInt!
+  transactionHash: String!
   msgId: String!
   fromDapp: String!
   toChainId: BigInt!
@@ -79,6 +103,8 @@ type ORMPUpgradeablePort_MessageSent {
 
 type SignaturePub_SignatureSubmittion {
   id: ID!
+  blockNumber: BigInt!
+  transactionHash: String!
   chainId: BigInt!
   channel: String!
   signer: String!

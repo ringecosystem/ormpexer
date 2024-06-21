@@ -157,7 +157,7 @@ networks:
       - name: ORMP
         address:
           - 0x5C5c383FEbE62F377F8c0eA1de97F2a2Ba102e98
-  - id: 2494104990 # tron-shasta
+  - id: 123456 # 2494104990 tron-shasta
     rpc_config:
       url: https://api.shasta.trongrid.io/jsonrpc
     start_block: 44337583

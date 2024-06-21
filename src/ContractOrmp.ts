@@ -6,7 +6,7 @@ import {
   ORMP_MessageDispatchedEntity,
   ORMPContract
 } from "generated";
-import {GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY} from "./Common";
+import {ADDRESS_ORACLE, ADDRESS_RELAYER, GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY} from "./Common";
 
 
 ORMPContract.HashImported.loader(({event, context}) => {
@@ -26,11 +26,16 @@ ORMPContract.HashImported.handler(({event, context}) => {
 
   const oRMP_HashImportedEntity: ORMP_HashImportedEntity = {
     id: event.transactionHash + event.logIndex.toString(),
-    oracle: event.params.oracle,
-    chainId: event.params.chainId,
+    blockNumber: BigInt(event.blockNumber),
+    transactionHash: event.transactionHash,
+
+    srcChainId: BigInt(event.chainId),
     channel: event.params.channel,
     msgIndex: event.params.msgIndex,
+    targetChainId: event.params.chainId,
+    oracle: event.params.oracle,
     hash: event.params.hash,
+
     eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY,
   };
 
@@ -53,7 +58,9 @@ ORMPContract.MessageAccepted.handler(({event, context}) => {
   };
 
   const oRMP_MessageAcceptedEntity: ORMP_MessageAcceptedEntity = {
-    id: event.transactionHash + event.logIndex.toString(),
+    id: event.params.msgHash,
+    blockNumber: BigInt(event.blockNumber),
+    transactionHash: event.transactionHash,
     msgHash: event.params.msgHash,
     channel: event.params.message[0],
     index: event.params.message[1],
@@ -64,6 +71,12 @@ ORMPContract.MessageAccepted.handler(({event, context}) => {
     gasLimit: event.params.message[6],
     encoded: event.params.message[7],
     eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY,
+    oracle: undefined,
+    oracleAssigned: undefined,
+    oracleAssignedFee: undefined,
+    relayer: undefined,
+    relayerAssigned: undefined,
+    relayerAssignedFee: undefined,
   };
 
   context.EventsSummary.set(nextSummaryEntity);
@@ -86,6 +99,8 @@ ORMPContract.MessageAssigned.handler(({event, context}) => {
 
   const oRMP_MessageAssignedEntity: ORMP_MessageAssignedEntity = {
     id: event.transactionHash + event.logIndex.toString(),
+    blockNumber: BigInt(event.blockNumber),
+    transactionHash: event.transactionHash,
     msgHash: event.params.msgHash,
     oracle: event.params.oracle,
     relayer: event.params.relayer,
@@ -97,6 +112,30 @@ ORMPContract.MessageAssigned.handler(({event, context}) => {
 
   context.EventsSummary.set(nextSummaryEntity);
   context.ORMP_MessageAssigned.set(oRMP_MessageAssignedEntity);
+
+  if (ADDRESS_RELAYER.includes(event.params.relayer)) {
+    const storedMessageAccepted = context.ORMP_MessageAccepted.get(event.params.msgHash);
+    if (storedMessageAccepted) {
+      context.ORMP_MessageAccepted.set({
+        ...storedMessageAccepted,
+        relayer: event.params.relayer,
+        relayerAssigned: true,
+        relayerAssignedFee: event.params.relayerFee,
+      });
+    }
+  }
+
+  if (ADDRESS_ORACLE.includes(event.params.oracle)) {
+    const storedMessageAccepted = context.ORMP_MessageAccepted.get(event.params.msgHash);
+    if (storedMessageAccepted) {
+      context.ORMP_MessageAccepted.set({
+        ...storedMessageAccepted,
+        oracle: event.params.oracle,
+        oracleAssigned: true,
+        oracleAssignedFee: event.params.oracleFee,
+      });
+    }
+  }
 });
 ORMPContract.MessageDispatched.loader(({event, context}) => {
   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
@@ -115,6 +154,9 @@ ORMPContract.MessageDispatched.handler(({event, context}) => {
 
   const oRMP_MessageDispatchedEntity: ORMP_MessageDispatchedEntity = {
     id: event.transactionHash + event.logIndex.toString(),
+    blockNumber: BigInt(event.blockNumber),
+    transactionHash: event.transactionHash,
+    targetChainId: BigInt(event.chainId),
     msgHash: event.params.msgHash,
     dispatchResult: event.params.dispatchResult,
     eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY,
