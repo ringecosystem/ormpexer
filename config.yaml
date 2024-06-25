@@ -61,16 +61,16 @@ networks:
         handler: src/EventHandlers.ts
         events:
           - event: SignatureSubmittion(uint256 indexed chainId, address indexed channel, address indexed signer, uint256 msgIndex, bytes signature, bytes data)
-#  - id: 137 # polygon
-#    start_block: 57711531
-#    end_block: null
-#    contracts:
-#      - name: ORMPUpgradeablePort
-#        address:
-#          - 0x2cd1867Fb8016f93710B6386f7f9F1D540A60812
-#      - name: ORMP
-#        address:
-#          - 0x13b2211a7cA45Db2808F6dB05557ce5347e3634e
+  - id: 137 # polygon
+    start_block: 57711531
+    end_block: null
+    contracts:
+      - name: ORMPUpgradeablePort
+        address:
+          - 0x2cd1867Fb8016f93710B6386f7f9F1D540A60812
+      - name: ORMP
+        address:
+          - 0x13b2211a7cA45Db2808F6dB05557ce5347e3634e
   - id: 701 # koi
     rpc_config:
       url: https://koi-rpc.darwinia.network

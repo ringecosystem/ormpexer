@@ -29,10 +29,10 @@ ORMPContract.HashImported.handler(({event, context}) => {
     blockNumber: BigInt(event.blockNumber),
     transactionHash: event.transactionHash,
 
-    srcChainId: BigInt(event.chainId),
+    srcChainId: event.params.chainId,
     channel: event.params.channel,
     msgIndex: event.params.msgIndex,
-    targetChainId: event.params.chainId,
+    targetChainId: BigInt(event.chainId),
     oracle: event.params.oracle,
     hash: event.params.hash,
 
