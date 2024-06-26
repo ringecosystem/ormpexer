@@ -122,7 +122,7 @@ type MessageProgress {
   inflight: BigInt!
 }
 
-type MessageFull {
+type MessagePort {
   id: ID!
   protocol: String!
   payload: String
@@ -139,7 +139,7 @@ type MessageFull {
   sourceDappAddress: String
   sourcePortAddress: String
 
-  #target
+  # target
   targetChainId: BigInt
   targetBlockNumber: BigInt
   targetBlockTimestamp: BigInt
@@ -148,4 +148,7 @@ type MessageFull {
   targetLogIndex: Int
   targetDappAddress: String
   targetPortAddress: String
+
+  # relation
+  ormp: ORMP_MessageAccepted
 }

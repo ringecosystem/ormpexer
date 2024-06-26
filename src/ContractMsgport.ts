@@ -1,5 +1,5 @@
 import {
-  EventsSummaryEntity,
+  EventsSummaryEntity, MessagePortEntity,
   MessageProgressEntity,
   ORMPUpgradeablePort_MessageRecvEntity,
   ORMPUpgradeablePort_MessageSentEntity,
@@ -38,24 +38,24 @@ ORMPUpgradeablePortContract.MessageRecv.handler(({event, context}) => {
   context.ORMPUpgradeablePort_MessageRecv.set(oRMPUpgradeablePort_MessageRecvEntity);
 
 
-  // message full
-  const storedMessageFull = context.MessageFull.get(msgId);
-  const currentMessageFull: any = {
+  // message port
+  const storedMessagePort = context.MessagePort.get(msgId);
+  const currentMessagePort: any = {
     id: msgId,
+    ormp_id: msgId,
     protocol: 'ormp',
     status: event.params.result ? 1 : 2,
-
-    targetChainId: BigInt(event.chainId),
     targetBlockNumber: BigInt(event.blockNumber),
     targetBlockTimestamp: BigInt(event.blockTimestamp),
-    targetTransactionHash: event.transactionHash,
-    targetTransactionIndex: event.transactionIndex,
+    targetChainId: BigInt(event.chainId),
     targetLogIndex: event.logIndex,
     targetPortAddress: event.srcAddress,
+    targetTransactionHash: event.transactionHash,
+    targetTransactionIndex: event.transactionIndex,
   };
-  context.MessageFull.set({
-    ...storedMessageFull,
-    ...currentMessageFull,
+  context.MessagePort.set({
+    ...storedMessagePort,
+    ...currentMessagePort,
   });
 
 
@@ -107,9 +107,10 @@ ORMPUpgradeablePortContract.MessageSent.handler(({event, context}) => {
   context.ORMPUpgradeablePort_MessageSent.set(oRMPUpgradeablePort_MessageSentEntity);
 
   // message full
-  const storedMessageFull = context.MessageFull.get(msgId);
-  const currentMessageFull: any = {
+  const storedMessagePort = context.MessagePort.get(msgId);
+  const currentMessagePort: any = {
     id: msgId,
+    ormp_id: msgId,
     protocol: 'ormp',
     payload: event.params.message,
     params: event.params.params,
@@ -126,10 +127,10 @@ ORMPUpgradeablePortContract.MessageSent.handler(({event, context}) => {
     targetChainId: BigInt(event.params.toChainId),
     targetDappAddress: event.params.toDapp,
   };
-  context.MessageFull.set({
-    ...storedMessageFull,
-    ...currentMessageFull,
-    status: storedMessageFull ? storedMessageFull.status : 0,
+  context.MessagePort.set({
+    ...storedMessagePort,
+    ...currentMessagePort,
+    status: storedMessagePort ? storedMessagePort.status : 0,
   });
 
   // increase progress
