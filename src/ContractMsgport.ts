@@ -28,6 +28,8 @@ ORMPUpgradeablePortContract.MessageRecv.handler(({event, context}) => {
     id: event.transactionHash + event.logIndex.toString(),
     blockNumber: BigInt(event.blockNumber),
     transactionHash: event.transactionHash,
+    blockTimestamp: BigInt(event.blockTimestamp),
+
     msgId: msgId,
     result: event.params.result,
     returnData: event.params.returnData,
@@ -94,6 +96,8 @@ ORMPUpgradeablePortContract.MessageSent.handler(({event, context}) => {
     id: event.transactionHash + event.logIndex.toString(),
     blockNumber: BigInt(event.blockNumber),
     transactionHash: event.transactionHash,
+    blockTimestamp: BigInt(event.blockTimestamp),
+
     msgId: msgId,
     fromDapp: event.params.fromDapp,
     toChainId: event.params.toChainId,

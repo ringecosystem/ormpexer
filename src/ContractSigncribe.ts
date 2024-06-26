@@ -21,6 +21,8 @@ SignaturePubContract.SignatureSubmittion.handler(({event, context}) => {
     id: event.transactionHash + event.logIndex.toString(),
     blockNumber: BigInt(event.blockNumber),
     transactionHash: event.transactionHash,
+    blockTimestamp: BigInt(event.blockTimestamp),
+
     chainId: event.params.chainId,
     channel: event.params.channel,
     signer: event.params.signer,

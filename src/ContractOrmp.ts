@@ -28,6 +28,7 @@ ORMPContract.HashImported.handler(({event, context}) => {
     id: event.transactionHash + event.logIndex.toString(),
     blockNumber: BigInt(event.blockNumber),
     transactionHash: event.transactionHash,
+    blockTimestamp: BigInt(event.blockTimestamp),
 
     srcChainId: event.params.chainId,
     channel: event.params.channel,
@@ -61,6 +62,8 @@ ORMPContract.MessageAccepted.handler(({event, context}) => {
     id: event.params.msgHash,
     blockNumber: BigInt(event.blockNumber),
     transactionHash: event.transactionHash,
+    blockTimestamp: BigInt(event.blockTimestamp),
+
     msgHash: event.params.msgHash,
     channel: event.params.message[0],
     index: event.params.message[1],
@@ -101,6 +104,8 @@ ORMPContract.MessageAssigned.handler(({event, context}) => {
     id: event.transactionHash + event.logIndex.toString(),
     blockNumber: BigInt(event.blockNumber),
     transactionHash: event.transactionHash,
+    blockTimestamp: BigInt(event.blockTimestamp),
+
     msgHash: event.params.msgHash,
     oracle: event.params.oracle,
     relayer: event.params.relayer,
@@ -156,6 +161,8 @@ ORMPContract.MessageDispatched.handler(({event, context}) => {
     id: event.transactionHash + event.logIndex.toString(),
     blockNumber: BigInt(event.blockNumber),
     transactionHash: event.transactionHash,
+    blockTimestamp: BigInt(event.blockTimestamp),
+
     targetChainId: BigInt(event.chainId),
     msgHash: event.params.msgHash,
     dispatchResult: event.params.dispatchResult,
