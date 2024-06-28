@@ -11,6 +11,7 @@ import {GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY, INITIAL_MESSAGE_PROGR
 ORMPUpgradeablePortContract.MessageRecv.loader(({event, context}) => {
   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
   context.MessagePort.load(event.params.msgId, undefined);
+  context.MessageProgress.load(event.chainId.toString());
 });
 
 ORMPUpgradeablePortContract.MessageRecv.handler(({event, context}) => {
@@ -80,6 +81,7 @@ ORMPUpgradeablePortContract.MessageRecv.handler(({event, context}) => {
 ORMPUpgradeablePortContract.MessageSent.loader(({event, context}) => {
   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
   context.MessagePort.load(event.params.msgId, undefined);
+  context.MessageProgress.load(event.chainId.toString());
 });
 
 ORMPUpgradeablePortContract.MessageSent.handler(({event, context}) => {
