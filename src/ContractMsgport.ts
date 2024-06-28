@@ -11,6 +11,7 @@ import {GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY, INITIAL_MESSAGE_PROGR
 ORMPUpgradeablePortContract.MessageRecv.loader(({event, context}) => {
   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
   context.MessagePort.load(event.params.msgId, undefined);
+  context.ORMP_MessageAccepted.load(event.params.msgId);
   context.MessageProgress.load(event.chainId.toString());
 });
 
@@ -65,16 +66,19 @@ ORMPUpgradeablePortContract.MessageRecv.handler(({event, context}) => {
 
 
   // decrease progress
-  const mpId = event.chainId.toString();
-  const messageProgress = context.MessageProgress.get(mpId);
-  if (messageProgress) {
-    const currentMessageProgress: MessageProgressEntity = messageProgress;
-    const nextMessageProgress = {
-      id: mpId,
-      total: currentMessageProgress.total,
-      inflight: currentMessageProgress.inflight - 1n,
-    };
-    context.MessageProgress.set(nextMessageProgress);
+  const messageAccepted = context.ORMP_MessageAccepted.get(msgId);
+  if (messageAccepted) { // maybe there index recv first
+    const fromChainId = messageAccepted.fromChainId.toString();
+    const messageProgress = context.MessageProgress.get(fromChainId);
+    if (messageProgress) {
+      const currentMessageProgress: MessageProgressEntity = messageProgress;
+      const nextMessageProgress = {
+        id: fromChainId,
+        total: currentMessageProgress.total,
+        inflight: currentMessageProgress.inflight - 1n,
+      };
+      context.MessageProgress.set(nextMessageProgress);
+    }
   }
 });
 

@@ -25,7 +25,7 @@ ORMPContract.HashImported.handler(({event, context}) => {
   };
 
   const oRMP_HashImportedEntity: ORMP_HashImportedEntity = {
-    id: event.transactionHash + event.logIndex.toString(),
+    id: event.params.hash,
     blockNumber: BigInt(event.blockNumber),
     transactionHash: event.transactionHash,
     blockTimestamp: BigInt(event.blockTimestamp),
