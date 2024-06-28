@@ -35,4 +35,3 @@ SignaturePubContract.SignatureSubmittion.handler(({event, context}) => {
   context.EventsSummary.set(nextSummaryEntity);
   context.SignaturePub_SignatureSubmittion.set(signaturePub_SignatureSubmittionEntity);
 });
-
