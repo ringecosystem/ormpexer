@@ -64,7 +64,6 @@ ORMPUpgradeablePortContract.MessageRecv.handler(({event, context}) => {
     ...currentMessagePort,
   });
 
-
   // decrease progress
   const messageAccepted = context.ORMP_MessageAccepted.get(msgId);
   if (messageAccepted) { // maybe there index recv first
