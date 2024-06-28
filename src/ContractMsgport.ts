@@ -149,5 +149,4 @@ ORMPUpgradeablePortContract.MessageSent.handler(({event, context}) => {
     inflight: currentMessageProgress.inflight + 1n,
   };
   context.MessageProgress.set(nextMessageProgress);
-
 });
