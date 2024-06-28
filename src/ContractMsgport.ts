@@ -81,7 +81,6 @@ ORMPUpgradeablePortContract.MessageRecv.handler(({event, context}) => {
   }
 });
 
-
 ORMPUpgradeablePortContract.MessageSent.loader(({event, context}) => {
   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
   context.MessagePort.load(event.params.msgId, undefined);
