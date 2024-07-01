@@ -1,4 +1,4 @@
-import {GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY} from "./Common";
+import {ADDRESS_ORACLE, ADDRESS_SIGNATURE, GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY} from "./Common";
 import {EventsSummaryEntity, SignaturePub_SignatureSubmittionEntity, SignaturePubContract} from "generated";
 
 
@@ -16,6 +16,9 @@ SignaturePubContract.SignatureSubmittion.handler(({event, context}) => {
     ...currentSummaryEntity,
     signaturePub_SignatureSubmittionCount: currentSummaryEntity.signaturePub_SignatureSubmittionCount + BigInt(1),
   };
+  if (!ADDRESS_SIGNATURE.includes(event.params.channel)) {
+    return;
+  }
 
   const signaturePub_SignatureSubmittionEntity: SignaturePub_SignatureSubmittionEntity = {
     id: event.transactionHash + event.logIndex.toString(),
