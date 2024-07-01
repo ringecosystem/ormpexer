@@ -1,5 +1,6 @@
 import {
   EventsSummaryEntity,
+  MessageProgressEntity,
   ORMPUpgradeablePort_MessageRecvEntity,
   ORMPUpgradeablePort_MessageSentEntity,
   ORMPUpgradeablePortContract,
@@ -11,6 +12,7 @@ ORMPUpgradeablePortContract.MessageRecv.loader(({event, context}) => {
   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
   context.MessagePort.load(event.params.msgId, undefined);
   context.ORMP_MessageAccepted.load(event.params.msgId);
+  context.MessageProgress.load('inflight');
 });
 
 ORMPUpgradeablePortContract.MessageRecv.handler(({event, context}) => {
@@ -62,11 +64,20 @@ ORMPUpgradeablePortContract.MessageRecv.handler(({event, context}) => {
     ...currentMessagePort,
   });
 
+  // message progress
+  const progressInflight = context.MessageProgress.get('inflight');
+  const currentProgressInflight: MessageProgressEntity = progressInflight ?? {
+    id: 'inflight',
+    amount: 0n
+  } as MessageProgressEntity;
+  context.MessageProgress.set({...currentProgressInflight, amount: currentProgressInflight.amount - 1n});
 });
 
 ORMPUpgradeablePortContract.MessageSent.loader(({event, context}) => {
   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
   context.MessagePort.load(event.params.msgId, undefined);
+  context.MessageProgress.load('total');
+  context.MessageProgress.load('inflight');
 });
 
 ORMPUpgradeablePortContract.MessageSent.handler(({event, context}) => {
@@ -126,4 +137,18 @@ ORMPUpgradeablePortContract.MessageSent.handler(({event, context}) => {
     ...currentMessagePort,
     status: storedMessagePort ? storedMessagePort.status : 0,
   });
+
+  // message progress
+  const progressTotal = context.MessageProgress.get('total');
+  const currentProgressTotal: MessageProgressEntity = progressTotal ?? {
+    id: 'total',
+    amount: 0n
+  } as MessageProgressEntity;
+  context.MessageProgress.set({...currentProgressTotal, amount: currentProgressTotal.amount + 1n});
+  const progressInflight = context.MessageProgress.get('inflight');
+  const currentProgressInflight: MessageProgressEntity = progressInflight ?? {
+    id: 'inflight',
+    amount: 0n
+  } as MessageProgressEntity;
+  context.MessageProgress.set({...currentProgressInflight, amount: currentProgressInflight.amount + 1n});
 });

@@ -162,3 +162,9 @@ type MessagePort {
   ormp: ORMP_MessageAccepted
 }
 
+type MessageProgress {
+  id: ID!
+  amount: BigInt!
+}
+
+
