@@ -1,4 +1,4 @@
-import {ADDRESS_ORACLE, ADDRESS_SIGNATURE, GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY} from "./Common";
+import {ADDRESS_SIGNATURE, GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY} from "./Common";
 import {EventsSummaryEntity, SignaturePub_SignatureSubmittionEntity, SignaturePubContract} from "generated";
 
 

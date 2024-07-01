@@ -1,10 +1,10 @@
 import {
-  EventsSummaryEntity, MessagePortEntity,
+  EventsSummaryEntity,
   ORMPUpgradeablePort_MessageRecvEntity,
   ORMPUpgradeablePort_MessageSentEntity,
   ORMPUpgradeablePortContract,
 } from "generated";
-import {GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY, INITIAL_MESSAGE_PROGRESS} from "./Common";
+import {GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY} from "./Common";
 
 
 ORMPUpgradeablePortContract.MessageRecv.loader(({event, context}) => {
