@@ -74,7 +74,7 @@ networks:
   - id: 701 # koi
     rpc_config:
       url: https://koi-rpc.darwinia.network
-    start_block: 97272
+    start_block: 6180
     end_block: null
     contracts:
       - name: ORMPUpgradeablePort
