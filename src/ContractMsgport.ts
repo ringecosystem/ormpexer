@@ -1,6 +1,5 @@
 import {
   EventsSummaryEntity, MessagePortEntity,
-  MessageProgressEntity,
   ORMPUpgradeablePort_MessageRecvEntity,
   ORMPUpgradeablePort_MessageSentEntity,
   ORMPUpgradeablePortContract,
@@ -12,7 +11,6 @@ ORMPUpgradeablePortContract.MessageRecv.loader(({event, context}) => {
   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
   context.MessagePort.load(event.params.msgId, undefined);
   context.ORMP_MessageAccepted.load(event.params.msgId);
-  context.MessageProgress.load(event.chainId.toString());
 });
 
 ORMPUpgradeablePortContract.MessageRecv.handler(({event, context}) => {
@@ -64,27 +62,11 @@ ORMPUpgradeablePortContract.MessageRecv.handler(({event, context}) => {
     ...currentMessagePort,
   });
 
-  // decrease progress
-  const messageAccepted = context.ORMP_MessageAccepted.get(msgId);
-  if (messageAccepted) { // maybe there index recv first
-    const fromChainId = messageAccepted.fromChainId.toString();
-    const messageProgress = context.MessageProgress.get(fromChainId);
-    if (messageProgress) {
-      const currentMessageProgress: MessageProgressEntity = messageProgress;
-      const nextMessageProgress = {
-        id: fromChainId,
-        total: currentMessageProgress.total,
-        inflight: currentMessageProgress.inflight - 1n,
-      };
-      context.MessageProgress.set(nextMessageProgress);
-    }
-  }
 });
 
 ORMPUpgradeablePortContract.MessageSent.loader(({event, context}) => {
   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
   context.MessagePort.load(event.params.msgId, undefined);
-  context.MessageProgress.load(event.chainId.toString());
 });
 
 ORMPUpgradeablePortContract.MessageSent.handler(({event, context}) => {
@@ -118,7 +100,7 @@ ORMPUpgradeablePortContract.MessageSent.handler(({event, context}) => {
   context.EventsSummary.set(nextSummaryEntity);
   context.ORMPUpgradeablePort_MessageSent.set(oRMPUpgradeablePort_MessageSentEntity);
 
-  // message full
+  // message port
   const storedMessagePort = context.MessagePort.get(msgId);
   const currentMessagePort: any = {
     id: msgId,
@@ -144,15 +126,4 @@ ORMPUpgradeablePortContract.MessageSent.handler(({event, context}) => {
     ...currentMessagePort,
     status: storedMessagePort ? storedMessagePort.status : 0,
   });
-
-  // increase progress
-  const mpId = event.chainId.toString();
-  const messageProgress = context.MessageProgress.get(mpId);
-  const currentMessageProgress: MessageProgressEntity = messageProgress ?? INITIAL_MESSAGE_PROGRESS;
-  const nextMessageProgress = {
-    id: mpId,
-    total: currentMessageProgress.total + 1n,
-    inflight: currentMessageProgress.inflight + 1n,
-  };
-  context.MessageProgress.set(nextMessageProgress);
 });

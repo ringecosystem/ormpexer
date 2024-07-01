@@ -131,12 +131,6 @@ type SignaturePub_SignatureSubmittion {
 
 ## custom
 
-type MessageProgress {
-  id: ID!
-  total: BigInt!
-  inflight: BigInt!
-}
-
 type MessagePort {
   id: ID!
   protocol: String!
@@ -167,3 +161,4 @@ type MessagePort {
   # relation
   ormp: ORMP_MessageAccepted
 }
+
