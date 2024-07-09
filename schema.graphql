@@ -138,6 +138,8 @@ type MessagePort {
   params: String
   status: Int! # 0: inflight, 1: success, 2: failed
 
+  sender: String
+
   # source
   sourceChainId: BigInt
   sourceBlockNumber: BigInt

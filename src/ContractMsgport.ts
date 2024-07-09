@@ -129,6 +129,8 @@ ORMPUpgradeablePortContract.MessageSent.handlerAsync(async ({event, context}) =>
     payload: event.params.message,
     params: event.params.params,
 
+    sender: event.txOrigin,
+
     sourceChainId: BigInt(event.chainId),
     sourceBlockNumber: BigInt(event.blockNumber),
     sourceBlockTimestamp: BigInt(event.blockTimestamp),
