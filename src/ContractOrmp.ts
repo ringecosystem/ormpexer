@@ -65,6 +65,7 @@ ORMPContract.MessageAccepted.handlerAsync(async ({event, context}) => {
     oRMP_MessageAcceptedCount: currentSummaryEntity.oRMP_MessageAcceptedCount + BigInt(1),
   };
 
+  const fromChainId = event.params.message[2];
   const oRMP_MessageAcceptedEntity: ORMP_MessageAcceptedEntity = {
     id: event.params.msgHash,
     blockNumber: BigInt(event.blockNumber),
@@ -74,7 +75,7 @@ ORMPContract.MessageAccepted.handlerAsync(async ({event, context}) => {
     msgHash: event.params.msgHash,
     channel: event.params.message[0],
     index: event.params.message[1],
-    fromChainId: event.params.message[2],
+    fromChainId: fromChainId,
     from: event.params.message[3],
     toChainId: event.params.message[4],
     to: event.params.message[5],
@@ -99,10 +100,10 @@ ORMPContract.MessageAccepted.handlerAsync(async ({event, context}) => {
   if (messagePending) {
     const messageDispatch = await context.ORMP_MessageDispatched.get(event.params.msgHash);
     if (messageDispatch) {
-      const messageProgress = await context.MessageProgress.get(event.chainId.toString());
+      const messageProgress = await context.MessageProgress.get(fromChainId.toString());
       const currentMessageProgress = messageProgress ?? INITIAL_MESSAGE_PROGRESS;
       const nextMessageProgress = {
-        id: event.chainId.toString(),
+        id: fromChainId.toString(),
         total: currentMessageProgress.total,
         inflight: currentMessageProgress.inflight - 1n,
       };
@@ -208,7 +209,7 @@ ORMPContract.MessageDispatched.handlerAsync(async ({event, context}) => {
       const messageProgress = await context.MessageProgress.get(messageAccepted.fromChainId.toString());
       const currentMessageProgress = messageProgress ?? INITIAL_MESSAGE_PROGRESS;
       const nextMessageProgress = {
-        id: event.chainId.toString(),
+        id: messageAccepted.fromChainId.toString(),
         total: currentMessageProgress.total,
         inflight: currentMessageProgress.inflight - 1n,
       };
