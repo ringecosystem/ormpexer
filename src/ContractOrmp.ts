@@ -6,13 +6,7 @@ import {
   ORMP_MessageDispatchedEntity,
   ORMPContract
 } from "generated";
-import {
-  ADDRESS_ORACLE,
-  ADDRESS_RELAYER,
-  GLOBAL_EVENTS_SUMMARY_KEY,
-  INITIAL_EVENTS_SUMMARY,
-  INITIAL_MESSAGE_PROGRESS
-} from "./Common";
+import {ADDRESS_ORACLE, ADDRESS_RELAYER, GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY,} from "./Common";
 
 
 // ORMPContract.HashImported.loader(({event, context}) => {
@@ -92,25 +86,6 @@ ORMPContract.MessageAccepted.handlerAsync(async ({event, context}) => {
 
   context.EventsSummary.set(nextSummaryEntity);
   context.ORMP_MessageAccepted.set(oRMP_MessageAcceptedEntity);
-
-
-
-  // message progress
-  const messagePending = await context.MessagePending.get(event.params.msgHash);
-  if (messagePending) {
-    const messageDispatch = await context.ORMP_MessageDispatched.get(event.params.msgHash);
-    if (messageDispatch) {
-      const messageProgress = await context.MessageProgress.get(fromChainId.toString());
-      const currentMessageProgress = messageProgress ?? INITIAL_MESSAGE_PROGRESS;
-      const nextMessageProgress = {
-        id: fromChainId.toString(),
-        total: currentMessageProgress.total,
-        inflight: currentMessageProgress.inflight - 1n,
-      };
-      context.MessageProgress.set(nextMessageProgress);
-      context.MessagePending.deleteUnsafe(event.params.msgHash);
-    }
-  }
 });
 
 
@@ -201,20 +176,4 @@ ORMPContract.MessageDispatched.handlerAsync(async ({event, context}) => {
   context.EventsSummary.set(nextSummaryEntity);
   context.ORMP_MessageDispatched.set(oRMP_MessageDispatchedEntity);
 
-  // message progress
-  const messagePending = await context.MessagePending.get(event.params.msgHash);
-  if (messagePending) {
-    const messageAccepted = await context.ORMP_MessageAccepted.get(event.params.msgHash);
-    if (messageAccepted) {
-      const messageProgress = await context.MessageProgress.get(messageAccepted.fromChainId.toString());
-      const currentMessageProgress = messageProgress ?? INITIAL_MESSAGE_PROGRESS;
-      const nextMessageProgress = {
-        id: messageAccepted.fromChainId.toString(),
-        total: currentMessageProgress.total,
-        inflight: currentMessageProgress.inflight - 1n,
-      };
-      context.MessageProgress.set(nextMessageProgress);
-      context.MessagePending.deleteUnsafe(event.params.msgHash);
-    }
-  }
 });

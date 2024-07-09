@@ -1,12 +1,10 @@
 import {
-  EventsSummaryEntity,
-  MessageProgressEntity,
+  EventsSummaryEntity, MessageProgressEntity,
   ORMPUpgradeablePort_MessageRecvEntity,
   ORMPUpgradeablePort_MessageSentEntity,
   ORMPUpgradeablePortContract,
 } from "generated";
-import {GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY, INITIAL_MESSAGE_PROGRESS} from "./Common";
-import type {MessageProgress_t as Entities_MessageProgress_t} from "generated/src/db/Entities.gen";
+import {GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY} from "./Common";
 
 
 // ORMPUpgradeablePortContract.MessageRecv.loader(({event, context}) => {
@@ -66,20 +64,12 @@ ORMPUpgradeablePortContract.MessageRecv.handlerAsync(async ({event, context}) =>
   });
 
   // message progress
-  const messageAccepted = await context.ORMP_MessageAccepted.get(msgId);
-  if (messageAccepted) {
-    const messageProgress = await context.MessageProgress.get(messageAccepted.fromChainId.toString());
-    const currentMessageProgress = messageProgress ?? INITIAL_MESSAGE_PROGRESS;
-    const nextMessageProgress = {
-      id: event.chainId.toString(),
-      total: currentMessageProgress.total,
-      inflight: currentMessageProgress.inflight - 1n,
-    };
-    context.MessageProgress.set(nextMessageProgress);
-    context.MessagePending.deleteUnsafe(msgId);
-  } else {
-    context.MessagePending.set({id: msgId});
-  }
+  const progressInflight = await context.MessageProgress.get('inflight');
+  const currentProgressInflight: MessageProgressEntity = progressInflight ?? {
+    id: 'inflight',
+    amount: 0n
+  } as MessageProgressEntity;
+  context.MessageProgress.set({...currentProgressInflight, amount: currentProgressInflight.amount - 1n});
 });
 
 // ORMPUpgradeablePortContract.MessageSent.loader(({event, context}) => {
@@ -149,13 +139,17 @@ ORMPUpgradeablePortContract.MessageSent.handlerAsync(async ({event, context}) =>
     status: storedMessagePort ? storedMessagePort.status : 0,
   });
 
-  const messageProgress = await context.MessageProgress.get(event.chainId.toString());
-  const currentMessageProgress = messageProgress ?? INITIAL_MESSAGE_PROGRESS;
-  const nextMessageProgress = {
-    id: event.chainId.toString(),
-    total: currentMessageProgress.total + 1n,
-    inflight: currentMessageProgress.inflight + 1n,
-  };
-  context.MessageProgress.set(nextMessageProgress);
-  context.MessagePending.deleteUnsafe(msgId);
+  // message progress
+  const progressTotal = await context.MessageProgress.get('total');
+  const currentProgressTotal: MessageProgressEntity = progressTotal ?? {
+    id: 'total',
+    amount: 0n
+  } as MessageProgressEntity;
+  context.MessageProgress.set({...currentProgressTotal, amount: currentProgressTotal.amount + 1n});
+  const progressInflight = await context.MessageProgress.get('inflight');
+  const currentProgressInflight: MessageProgressEntity = progressInflight ?? {
+    id: 'inflight',
+    amount: 0n
+  } as MessageProgressEntity;
+  context.MessageProgress.set({...currentProgressInflight, amount: currentProgressInflight.amount + 1n});
 });

@@ -14,12 +14,6 @@ export const INITIAL_EVENTS_SUMMARY: EventsSummaryEntity = {
   signaturePub_SignatureSubmittionCount: BigInt(0),
 };
 
-export const INITIAL_MESSAGE_PROGRESS: MessageProgressEntity = {
-  id: "",
-  total: 0n,
-  inflight: 0n,
-};
-
 export const ADDRESS_RELAYER = [
   "0x114890eB7386F94eae410186F20968bFAf66142a",
   "0xFF9b99c9F654DAFB00a9EbEd42D221b261ceB8a6", // TZGjiJcoqUo6JSZeYvrwN6qvpEcLm21QbG
