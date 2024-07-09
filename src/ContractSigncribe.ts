@@ -2,12 +2,12 @@ import {ADDRESS_SIGNATURE, GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY} fr
 import {EventsSummaryEntity, SignaturePub_SignatureSubmittionEntity, SignaturePubContract} from "generated";
 
 
-SignaturePubContract.SignatureSubmittion.loader(({event, context}) => {
-  context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
-});
+// SignaturePubContract.SignatureSubmittion.loader(({event, context}) => {
+//   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+// });
 
-SignaturePubContract.SignatureSubmittion.handler(({event, context}) => {
-  const summary = context.EventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
+SignaturePubContract.SignatureSubmittion.handlerAsync(async ({event, context}) => {
+  const summary = await context.EventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
 
   const currentSummaryEntity: EventsSummaryEntity =
     summary ?? INITIAL_EVENTS_SUMMARY;

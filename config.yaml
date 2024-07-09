@@ -4,14 +4,20 @@ contracts:
     handler: src/EventHandlers.ts
     events:
       - event: HashImported(address indexed oracle, uint256 chainId, address channel, uint256 msgIndex, bytes32 hash)
+        isAsync: true
       - event: MessageAccepted(bytes32 indexed msgHash, (address,uint256,uint256,address,uint256,address,uint256,bytes) message)
+        isAsync: true
       - event: MessageAssigned(bytes32 indexed msgHash, address indexed oracle, address indexed relayer, uint256 oracleFee, uint256 relayerFee, bytes params)
+        isAsync: true
       - event: MessageDispatched(bytes32 indexed msgHash, bool dispatchResult)
+        isAsync: true
   - name: ORMPUpgradeablePort
     handler: src/EventHandlers.ts
     events:
       - event: MessageRecv(bytes32 indexed msgId, bool result, bytes returnData)
+        isAsync: true
       - event: MessageSent(bytes32 indexed msgId, address fromDapp, uint256 toChainId, address toDapp, bytes message, bytes params)
+        isAsync: true
 networks:
   - id: 1 # ethereum
     start_block: 20009590
@@ -61,6 +67,7 @@ networks:
         handler: src/EventHandlers.ts
         events:
           - event: SignatureSubmittion(uint256 indexed chainId, address indexed channel, address indexed signer, uint256 msgIndex, bytes signature, bytes data)
+            isAsync: true
   - id: 137 # polygon
     start_block: 57711531
     end_block: null

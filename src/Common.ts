@@ -1,4 +1,5 @@
-import {EventsSummaryEntity} from "generated";
+import {EventsSummaryEntity, MessageProgressEntity} from "generated";
+import type {MessageProgress_t as Entities_MessageProgress_t} from "generated/src/db/Entities.gen";
 
 export const GLOBAL_EVENTS_SUMMARY_KEY = "GlobalEventsSummary";
 
@@ -11,6 +12,12 @@ export const INITIAL_EVENTS_SUMMARY: EventsSummaryEntity = {
   oRMPUpgradeablePort_MessageRecvCount: BigInt(0),
   oRMPUpgradeablePort_MessageSentCount: BigInt(0),
   signaturePub_SignatureSubmittionCount: BigInt(0),
+};
+
+export const INITIAL_MESSAGE_PROGRESS: MessageProgressEntity = {
+  id: "",
+  total: 0n,
+  inflight: 0n,
 };
 
 export const ADDRESS_RELAYER = [

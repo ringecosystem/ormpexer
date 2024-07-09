@@ -6,15 +6,21 @@ import {
   ORMP_MessageDispatchedEntity,
   ORMPContract
 } from "generated";
-import {ADDRESS_ORACLE, ADDRESS_RELAYER, GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY} from "./Common";
+import {
+  ADDRESS_ORACLE,
+  ADDRESS_RELAYER,
+  GLOBAL_EVENTS_SUMMARY_KEY,
+  INITIAL_EVENTS_SUMMARY,
+  INITIAL_MESSAGE_PROGRESS
+} from "./Common";
 
 
-ORMPContract.HashImported.loader(({event, context}) => {
-  context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
-});
+// ORMPContract.HashImported.loader(({event, context}) => {
+//   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+// });
 
-ORMPContract.HashImported.handler(({event, context}) => {
-  const summary = context.EventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
+ORMPContract.HashImported.handlerAsync(async ({event, context}) => {
+  const summary = await context.EventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
 
   const currentSummaryEntity: EventsSummaryEntity =
     summary ?? INITIAL_EVENTS_SUMMARY;
@@ -43,12 +49,13 @@ ORMPContract.HashImported.handler(({event, context}) => {
   context.EventsSummary.set(nextSummaryEntity);
   context.ORMP_HashImported.set(oRMP_HashImportedEntity);
 });
-ORMPContract.MessageAccepted.loader(({event, context}) => {
-  context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
-});
 
-ORMPContract.MessageAccepted.handler(({event, context}) => {
-  const summary = context.EventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
+// ORMPContract.MessageAccepted.loader(({event, context}) => {
+//   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+// });
+
+ORMPContract.MessageAccepted.handlerAsync(async ({event, context}) => {
+  const summary = await context.EventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
 
   const currentSummaryEntity: EventsSummaryEntity =
     summary ?? INITIAL_EVENTS_SUMMARY;
@@ -84,13 +91,34 @@ ORMPContract.MessageAccepted.handler(({event, context}) => {
 
   context.EventsSummary.set(nextSummaryEntity);
   context.ORMP_MessageAccepted.set(oRMP_MessageAcceptedEntity);
-});
-ORMPContract.MessageAssigned.loader(({event, context}) => {
-  context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+
+
+
+  // message progress
+  const messagePending = await context.MessagePending.get(event.params.msgHash);
+  if (messagePending) {
+    const messageDispatch = await context.ORMP_MessageDispatched.get(event.params.msgHash);
+    if (messageDispatch) {
+      const messageProgress = await context.MessageProgress.get(event.chainId.toString());
+      const currentMessageProgress = messageProgress ?? INITIAL_MESSAGE_PROGRESS;
+      const nextMessageProgress = {
+        id: event.chainId.toString(),
+        total: currentMessageProgress.total,
+        inflight: currentMessageProgress.inflight - 1n,
+      };
+      context.MessageProgress.set(nextMessageProgress);
+      context.MessagePending.deleteUnsafe(event.params.msgHash);
+    }
+  }
 });
 
-ORMPContract.MessageAssigned.handler(({event, context}) => {
-  const summary = context.EventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
+
+// ORMPContract.MessageAssigned.loader(({event, context}) => {
+//   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+// });
+
+ORMPContract.MessageAssigned.handlerAsync(async ({event, context}) => {
+  const summary = await context.EventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
 
   const currentSummaryEntity: EventsSummaryEntity =
     summary ?? INITIAL_EVENTS_SUMMARY;
@@ -119,7 +147,7 @@ ORMPContract.MessageAssigned.handler(({event, context}) => {
   context.ORMP_MessageAssigned.set(oRMP_MessageAssignedEntity);
 
   if (ADDRESS_RELAYER.includes(event.params.relayer)) {
-    const storedMessageAccepted = context.ORMP_MessageAccepted.get(event.params.msgHash);
+    const storedMessageAccepted = await context.ORMP_MessageAccepted.get(event.params.msgHash);
     if (storedMessageAccepted) {
       context.ORMP_MessageAccepted.set({
         ...storedMessageAccepted,
@@ -131,7 +159,7 @@ ORMPContract.MessageAssigned.handler(({event, context}) => {
   }
 
   if (ADDRESS_ORACLE.includes(event.params.oracle)) {
-    const storedMessageAccepted = context.ORMP_MessageAccepted.get(event.params.msgHash);
+    const storedMessageAccepted = await context.ORMP_MessageAccepted.get(event.params.msgHash);
     if (storedMessageAccepted) {
       context.ORMP_MessageAccepted.set({
         ...storedMessageAccepted,
@@ -142,15 +170,15 @@ ORMPContract.MessageAssigned.handler(({event, context}) => {
     }
   }
 });
-ORMPContract.MessageDispatched.loader(({event, context}) => {
-  context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
-});
 
-ORMPContract.MessageDispatched.handler(({event, context}) => {
-  const summary = context.EventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
+// ORMPContract.MessageDispatched.loader(({event, context}) => {
+//   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
+// });
 
-  const currentSummaryEntity: EventsSummaryEntity =
-    summary ?? INITIAL_EVENTS_SUMMARY;
+ORMPContract.MessageDispatched.handlerAsync(async ({event, context}) => {
+  const summary = await context.EventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
+
+  const currentSummaryEntity: EventsSummaryEntity = summary ?? INITIAL_EVENTS_SUMMARY;
 
   const nextSummaryEntity = {
     ...currentSummaryEntity,
@@ -158,7 +186,7 @@ ORMPContract.MessageDispatched.handler(({event, context}) => {
   };
 
   const oRMP_MessageDispatchedEntity: ORMP_MessageDispatchedEntity = {
-    id: event.transactionHash + event.logIndex.toString(),
+    id: event.params.msgHash,
     blockNumber: BigInt(event.blockNumber),
     transactionHash: event.transactionHash,
     blockTimestamp: BigInt(event.blockTimestamp),
@@ -171,4 +199,21 @@ ORMPContract.MessageDispatched.handler(({event, context}) => {
 
   context.EventsSummary.set(nextSummaryEntity);
   context.ORMP_MessageDispatched.set(oRMP_MessageDispatchedEntity);
+
+  // message progress
+  const messagePending = await context.MessagePending.get(event.params.msgHash);
+  if (messagePending) {
+    const messageAccepted = await context.ORMP_MessageAccepted.get(event.params.msgHash);
+    if (messageAccepted) {
+      const messageProgress = await context.MessageProgress.get(event.chainId.toString());
+      const currentMessageProgress = messageProgress ?? INITIAL_MESSAGE_PROGRESS;
+      const nextMessageProgress = {
+        id: event.chainId.toString(),
+        total: currentMessageProgress.total,
+        inflight: currentMessageProgress.inflight - 1n,
+      };
+      context.MessageProgress.set(nextMessageProgress);
+      context.MessagePending.deleteUnsafe(event.params.msgHash);
+    }
+  }
 });

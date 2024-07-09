@@ -164,7 +164,11 @@ type MessagePort {
 
 type MessageProgress {
   id: ID!
-  amount: BigInt!
+  total: BigInt!
+  inflight: BigInt!
 }
 
+type MessagePending {
+  id: ID!
+}
 
