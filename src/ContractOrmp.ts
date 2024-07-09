@@ -205,7 +205,7 @@ ORMPContract.MessageDispatched.handlerAsync(async ({event, context}) => {
   if (messagePending) {
     const messageAccepted = await context.ORMP_MessageAccepted.get(event.params.msgHash);
     if (messageAccepted) {
-      const messageProgress = await context.MessageProgress.get(event.chainId.toString());
+      const messageProgress = await context.MessageProgress.get(messageAccepted.fromChainId.toString());
       const currentMessageProgress = messageProgress ?? INITIAL_MESSAGE_PROGRESS;
       const nextMessageProgress = {
         id: event.chainId.toString(),
