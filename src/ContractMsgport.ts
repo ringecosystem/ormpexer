@@ -1,5 +1,6 @@
 import {
-  EventsSummaryEntity, MessageProgressEntity,
+  EventsSummaryEntity,
+  MessageProgressEntity,
   ORMPUpgradeablePort_MessageRecvEntity,
   ORMPUpgradeablePort_MessageSentEntity,
   ORMPUpgradeablePortContract,
@@ -49,7 +50,7 @@ ORMPUpgradeablePortContract.MessageRecv.handlerAsync(async ({event, context}) =>
     id: msgId,
     ormp_id: msgId,
     protocol: 'ormp',
-    status: event.params.result ? 1 : 2,
+    // status: event.params.result ? 1 : 2,
     targetBlockNumber: BigInt(event.blockNumber),
     targetBlockTimestamp: BigInt(event.blockTimestamp),
     targetChainId: BigInt(event.chainId),
@@ -62,14 +63,6 @@ ORMPUpgradeablePortContract.MessageRecv.handlerAsync(async ({event, context}) =>
     ...storedMessagePort,
     ...currentMessagePort,
   });
-
-  // message progress
-  const progressInflight = await context.MessageProgress.get('inflight');
-  const currentProgressInflight: MessageProgressEntity = progressInflight ?? {
-    id: 'inflight',
-    amount: 0n
-  } as MessageProgressEntity;
-  context.MessageProgress.set({...currentProgressInflight, amount: currentProgressInflight.amount - 1n});
 });
 
 // ORMPUpgradeablePortContract.MessageSent.loader(({event, context}) => {

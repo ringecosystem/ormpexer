@@ -1,5 +1,5 @@
 import {
-  EventsSummaryEntity,
+  EventsSummaryEntity, MessageProgressEntity,
   ORMP_HashImportedEntity,
   ORMP_MessageAcceptedEntity,
   ORMP_MessageAssignedEntity,
@@ -176,4 +176,34 @@ ORMPContract.MessageDispatched.handlerAsync(async ({event, context}) => {
   context.EventsSummary.set(nextSummaryEntity);
   context.ORMP_MessageDispatched.set(oRMP_MessageDispatchedEntity);
 
+
+  // message port
+  const storedMessagePort = await context.MessagePort.get(event.params.msgHash);
+  const currentMessagePort: any = {
+    id: event.params.msgHash,
+    ormp_id: event.params.msgHash,
+    protocol: 'ormp',
+    status: event.params.dispatchResult ? 1 : 2,
+  };
+  context.MessagePort.set({
+    ...storedMessagePort,
+    ...currentMessagePort,
+  });
+
+  // message progress
+  const progressInflight = await context.MessageProgress.get('inflight');
+  const currentProgressInflight: MessageProgressEntity = progressInflight ?? {
+    id: 'inflight',
+    amount: 0n
+  } as MessageProgressEntity;
+  context.MessageProgress.set({...currentProgressInflight, amount: currentProgressInflight.amount - 1n});
+
+  if (!event.params.dispatchResult) {
+    const progressFailed = await context.MessageProgress.get('failed');
+    const currentProgressFailed: MessageProgressEntity = progressFailed ?? {
+      id: 'failed',
+      amount: 0n
+    } as MessageProgressEntity;
+    context.MessageProgress.set({...currentProgressFailed, amount: currentProgressFailed.amount + 1n});
+  }
 });
