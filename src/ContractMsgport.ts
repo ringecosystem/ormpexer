@@ -1,48 +1,27 @@
 import {
-  EventsSummaryEntity,
-  MessageProgressEntity,
-  ORMPUpgradeablePort_MessageRecvEntity,
-  ORMPUpgradeablePort_MessageSentEntity,
-  ORMPUpgradeablePortContract,
+  MessageProgress,
+  ORMPUpgradeablePort,
+  ORMPUpgradeablePort_MessageRecv,
+  ORMPUpgradeablePort_MessageSent,
 } from "generated";
-import {GLOBAL_EVENTS_SUMMARY_KEY, INITIAL_EVENTS_SUMMARY} from "./Common";
 
 
-// ORMPUpgradeablePortContract.MessageRecv.loader(({event, context}) => {
-//   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
-//   context.MessagePort.load(event.params.msgId, undefined);
-//   context.ORMP_MessageAccepted.load(event.params.msgId);
-//   context.MessageProgress.load('inflight');
-// });
-
-ORMPUpgradeablePortContract.MessageRecv.handlerAsync(async ({event, context}) => {
-  const summary = await context.EventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
-
-  const currentSummaryEntity: EventsSummaryEntity =
-    summary ?? INITIAL_EVENTS_SUMMARY;
-
-  const nextSummaryEntity = {
-    ...currentSummaryEntity,
-    oRMPUpgradeablePort_MessageRecvCount: currentSummaryEntity.oRMPUpgradeablePort_MessageRecvCount + BigInt(1),
-  };
-
+ORMPUpgradeablePort.MessageRecv.handler(async ({ event, context }) => {
   const msgId = event.params.msgId;
-  const oRMPUpgradeablePort_MessageRecvEntity: ORMPUpgradeablePort_MessageRecvEntity = {
-    id: event.transactionHash + event.logIndex.toString(),
-    blockNumber: BigInt(event.blockNumber),
-    transactionHash: event.transactionHash,
-    blockTimestamp: BigInt(event.blockTimestamp),
+
+  const entity: ORMPUpgradeablePort_MessageRecv = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    blockNumber: BigInt(event.block.number),
+    transactionHash: event.transaction.hash,
+    blockTimestamp: BigInt(event.block.timestamp),
 
     chainId: BigInt(event.chainId),
     msgId: msgId,
     result: event.params.result,
     returnData: event.params.returnData,
-    eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY,
   };
 
-  context.EventsSummary.set(nextSummaryEntity);
-  context.ORMPUpgradeablePort_MessageRecv.set(oRMPUpgradeablePort_MessageRecvEntity);
-
+  context.ORMPUpgradeablePort_MessageRecv.set(entity);
 
   // message port
   const storedMessagePort = await context.MessagePort.get(msgId);
@@ -51,13 +30,13 @@ ORMPUpgradeablePortContract.MessageRecv.handlerAsync(async ({event, context}) =>
     ormp_id: msgId,
     protocol: 'ormp',
     // status: event.params.result ? 1 : 2,
-    targetBlockNumber: BigInt(event.blockNumber),
-    targetBlockTimestamp: BigInt(event.blockTimestamp),
+    targetBlockNumber: BigInt(event.block.number),
+    targetBlockTimestamp: BigInt(event.block.timestamp),
     targetChainId: BigInt(event.chainId),
     targetLogIndex: event.logIndex,
     targetPortAddress: event.srcAddress,
-    targetTransactionHash: event.transactionHash,
-    targetTransactionIndex: event.transactionIndex,
+    targetTransactionHash: event.transaction.hash,
+    targetTransactionIndex: event.transaction.transactionIndex,
   };
   context.MessagePort.set({
     ...storedMessagePort,
@@ -65,30 +44,14 @@ ORMPUpgradeablePortContract.MessageRecv.handlerAsync(async ({event, context}) =>
   });
 });
 
-// ORMPUpgradeablePortContract.MessageSent.loader(({event, context}) => {
-//   context.EventsSummary.load(GLOBAL_EVENTS_SUMMARY_KEY);
-//   context.MessagePort.load(event.params.msgId, undefined);
-//   context.MessageProgress.load('total');
-//   context.MessageProgress.load('inflight');
-// });
-
-ORMPUpgradeablePortContract.MessageSent.handlerAsync(async ({event, context}) => {
-  const summary = await context.EventsSummary.get(GLOBAL_EVENTS_SUMMARY_KEY);
-
-  const currentSummaryEntity: EventsSummaryEntity =
-    summary ?? INITIAL_EVENTS_SUMMARY;
-
-  const nextSummaryEntity = {
-    ...currentSummaryEntity,
-    oRMPUpgradeablePort_MessageSentCount: currentSummaryEntity.oRMPUpgradeablePort_MessageSentCount + BigInt(1),
-  };
-
+ORMPUpgradeablePort.MessageSent.handler(async ({ event, context }) => {
   const msgId = event.params.msgId;
-  const oRMPUpgradeablePort_MessageSentEntity: ORMPUpgradeablePort_MessageSentEntity = {
-    id: event.transactionHash + event.logIndex.toString(),
-    blockNumber: BigInt(event.blockNumber),
-    transactionHash: event.transactionHash,
-    blockTimestamp: BigInt(event.blockTimestamp),
+
+  const entity: ORMPUpgradeablePort_MessageSent = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    blockNumber: BigInt(event.block.number),
+    transactionHash: event.transaction.hash,
+    blockTimestamp: BigInt(event.block.timestamp),
 
     chainId: BigInt(event.chainId),
     msgId: msgId,
@@ -97,11 +60,10 @@ ORMPUpgradeablePortContract.MessageSent.handlerAsync(async ({event, context}) =>
     toDapp: event.params.toDapp,
     message: event.params.message,
     params: event.params.params,
-    eventsSummary: GLOBAL_EVENTS_SUMMARY_KEY,
   };
 
-  context.EventsSummary.set(nextSummaryEntity);
-  context.ORMPUpgradeablePort_MessageSent.set(oRMPUpgradeablePort_MessageSentEntity);
+  context.ORMPUpgradeablePort_MessageSent.set(entity);
+
 
   // message port
   const storedMessagePort = await context.MessagePort.get(msgId);
@@ -112,13 +74,13 @@ ORMPUpgradeablePortContract.MessageSent.handlerAsync(async ({event, context}) =>
     payload: event.params.message,
     params: event.params.params,
 
-    sender: event.txOrigin,
+    sender: event.transaction.from,
 
     sourceChainId: BigInt(event.chainId),
-    sourceBlockNumber: BigInt(event.blockNumber),
-    sourceBlockTimestamp: BigInt(event.blockTimestamp),
-    sourceTransactionHash: event.transactionHash,
-    sourceTransactionIndex: event.transactionIndex,
+    sourceBlockNumber: BigInt(event.block.number),
+    sourceBlockTimestamp: BigInt(event.block.timestamp),
+    sourceTransactionHash: event.transaction.hash,
+    sourceTransactionIndex: event.transaction.transactionIndex,
     sourceLogIndex: event.logIndex,
     sourceDappAddress: event.params.fromDapp,
     sourcePortAddress: event.srcAddress,
@@ -134,15 +96,15 @@ ORMPUpgradeablePortContract.MessageSent.handlerAsync(async ({event, context}) =>
 
   // message progress
   const progressTotal = await context.MessageProgress.get('total');
-  const currentProgressTotal: MessageProgressEntity = progressTotal ?? {
+  const currentProgressTotal: MessageProgress = progressTotal ?? {
     id: 'total',
     amount: 0n
-  } as MessageProgressEntity;
+  } as MessageProgress;
   context.MessageProgress.set({...currentProgressTotal, amount: currentProgressTotal.amount + 1n});
   const progressInflight = await context.MessageProgress.get('inflight');
-  const currentProgressInflight: MessageProgressEntity = progressInflight ?? {
+  const currentProgressInflight: MessageProgress = progressInflight ?? {
     id: 'inflight',
     amount: 0n
-  } as MessageProgressEntity;
+  } as MessageProgress;
   context.MessageProgress.set({...currentProgressInflight, amount: currentProgressInflight.amount + 1n});
 });
