@@ -179,7 +179,7 @@ networks:
   - id: 2818 # morph
     rpc_config:
       url: https://rpc.morphl2.io
-    start_block: 44847100 # todo: change this
+    start_block: 59565
     end_block: null
     contracts:
       - name: ORMPUpgradeablePort
