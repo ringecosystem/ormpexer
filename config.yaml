@@ -52,6 +52,8 @@ networks:
         address:
           - 0x13b2211a7cA45Db2808F6dB05557ce5347e3634e
   - id: 46 # darwinia
+    rpc_config:
+      url: https://darwinia.rpc.subquery.network/public
     start_block: 2830139
     end_block: null
     contracts:
