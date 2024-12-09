@@ -5,7 +5,6 @@ import {
   ORMP_MessageAccepted,
   ORMP_MessageAssigned,
   ORMP_MessageDispatched,
-  ORMP_SetterChanged,
 } from "generated";
 import { ADDRESS_RELAYER, ADDRESS_ORACLE } from "./Common";
 
