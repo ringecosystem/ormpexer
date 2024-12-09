@@ -5,7 +5,6 @@ import {
   ORMPUpgradeablePort_MessageSent,
 } from "generated";
 
-
 ORMPUpgradeablePort.MessageRecv.handler(async ({ event, context }) => {
   const msgId = event.params.msgId;
 
@@ -28,8 +27,8 @@ ORMPUpgradeablePort.MessageRecv.handler(async ({ event, context }) => {
   const currentMessagePort: any = {
     id: msgId,
     ormp_id: msgId,
-    protocol: 'ormp',
-    // status: event.params.result ? 1 : 2,
+    protocol: "ormp",
+    status: storedMessagePort?.status ?? (event.params.result ? 1 : 2),
     targetBlockNumber: BigInt(event.block.number),
     targetBlockTimestamp: BigInt(event.block.timestamp),
     targetChainId: BigInt(event.chainId),
@@ -64,13 +63,12 @@ ORMPUpgradeablePort.MessageSent.handler(async ({ event, context }) => {
 
   context.ORMPUpgradeablePort_MessageSent.set(entity);
 
-
   // message port
   const storedMessagePort = await context.MessagePort.get(msgId);
   const currentMessagePort: any = {
     id: msgId,
     ormp_id: msgId,
-    protocol: 'ormp',
+    protocol: "ormp",
     payload: event.params.message,
     params: event.params.params,
 
@@ -95,16 +93,26 @@ ORMPUpgradeablePort.MessageSent.handler(async ({ event, context }) => {
   });
 
   // message progress
-  const progressTotal = await context.MessageProgress.get('total');
-  const currentProgressTotal: MessageProgress = progressTotal ?? {
-    id: 'total',
-    amount: 0n
-  } as MessageProgress;
-  context.MessageProgress.set({...currentProgressTotal, amount: currentProgressTotal.amount + 1n});
-  const progressInflight = await context.MessageProgress.get('inflight');
-  const currentProgressInflight: MessageProgress = progressInflight ?? {
-    id: 'inflight',
-    amount: 0n
-  } as MessageProgress;
-  context.MessageProgress.set({...currentProgressInflight, amount: currentProgressInflight.amount + 1n});
+  const progressTotal = await context.MessageProgress.get("total");
+  const currentProgressTotal: MessageProgress =
+    progressTotal ??
+    ({
+      id: "total",
+      amount: 0n,
+    } as MessageProgress);
+  context.MessageProgress.set({
+    ...currentProgressTotal,
+    amount: currentProgressTotal.amount + 1n,
+  });
+  const progressInflight = await context.MessageProgress.get("inflight");
+  const currentProgressInflight: MessageProgress =
+    progressInflight ??
+    ({
+      id: "inflight",
+      amount: 0n,
+    } as MessageProgress);
+  context.MessageProgress.set({
+    ...currentProgressInflight,
+    amount: currentProgressInflight.amount + 1n,
+  });
 });
