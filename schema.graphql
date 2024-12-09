@@ -1,20 +1,3 @@
-type EventsSummary {
-  id: ID!
-  oRMP_HashImported: [ORMP_HashImported!]! @derivedFrom(field: "eventsSummary")
-  oRMP_HashImportedCount: BigInt!
-  oRMP_MessageAccepted: [ORMP_MessageAccepted!]! @derivedFrom(field: "eventsSummary")
-  oRMP_MessageAcceptedCount: BigInt!
-  oRMP_MessageAssigned: [ORMP_MessageAssigned!]! @derivedFrom(field: "eventsSummary")
-  oRMP_MessageAssignedCount: BigInt!
-  oRMP_MessageDispatched: [ORMP_MessageDispatched!]! @derivedFrom(field: "eventsSummary")
-  oRMP_MessageDispatchedCount: BigInt!
-  oRMPUpgradeablePort_MessageRecv: [ORMPUpgradeablePort_MessageRecv!]! @derivedFrom(field: "eventsSummary")
-  oRMPUpgradeablePort_MessageRecvCount: BigInt!
-  oRMPUpgradeablePort_MessageSent: [ORMPUpgradeablePort_MessageSent!]! @derivedFrom(field: "eventsSummary")
-  oRMPUpgradeablePort_MessageSentCount: BigInt!
-  signaturePub_SignatureSubmittion: [SignaturePub_SignatureSubmittion!]! @derivedFrom(field: "eventsSummary")
-  signaturePub_SignatureSubmittionCount: BigInt!
-}
 
 type ORMP_HashImported {
   id: ID!
@@ -28,7 +11,6 @@ type ORMP_HashImported {
   channel: String!
   msgIndex: BigInt!
   hash: String!
-  eventsSummary: String!
 }
 
 type ORMP_MessageAccepted {
@@ -46,7 +28,6 @@ type ORMP_MessageAccepted {
   to: String!
   gasLimit: BigInt!
   encoded: String!
-  eventsSummary: String!
 
   # extra
   oracle: String
@@ -70,19 +51,17 @@ type ORMP_MessageAssigned {
   oracleFee: BigInt!
   relayerFee: BigInt!
   params: String!
-  eventsSummary: String!
 }
 
 type ORMP_MessageDispatched {
   id: ID!
-  targetChainId: BigInt!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
-
   transactionHash: String!
+
+  targetChainId: BigInt!
   msgHash: String!
   dispatchResult: Boolean!
-  eventsSummary: String!
 }
 
 type ORMPUpgradeablePort_MessageRecv {
@@ -95,7 +74,6 @@ type ORMPUpgradeablePort_MessageRecv {
   msgId: String!
   result: Boolean!
   returnData: String!
-  eventsSummary: String!
 }
 
 type ORMPUpgradeablePort_MessageSent {
@@ -111,7 +89,6 @@ type ORMPUpgradeablePort_MessageSent {
   toDapp: String!
   message: String!
   params: String!
-  eventsSummary: String!
 }
 
 type SignaturePub_SignatureSubmittion {
@@ -126,7 +103,6 @@ type SignaturePub_SignatureSubmittion {
   msgIndex: BigInt!
   signature: String!
   data: String!
-  eventsSummary: String!
 }
 
 ## custom
