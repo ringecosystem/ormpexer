@@ -146,8 +146,8 @@ networks:
         address:
           - 0x841B6b2F3148131Ac161d88edFb2C11F146e189F
   - id: 2818 # morph
-    rpc_config:
-      url: https://rpc.morphl2.io
+    # rpc_config:
+    #   url: https://rpc.morphl2.io
     start_block: 59565
     contracts:
       - name: ORMPUpgradeablePort
