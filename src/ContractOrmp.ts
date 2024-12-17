@@ -10,7 +10,7 @@ import { ADDRESS_RELAYER, ADDRESS_ORACLE } from "./Common";
 
 ORMP.HashImported.handler(async ({ event, context }) => {
   const entity: ORMP_HashImported = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    id: event.params.hash,
     blockNumber: BigInt(event.block.number),
     transactionHash: event.transaction.hash,
     blockTimestamp: BigInt(event.block.timestamp),
@@ -30,7 +30,7 @@ ORMP.MessageAccepted.handler(async ({ event, context }) => {
   const fromChainId = event.params.message[2];
 
   const entity: ORMP_MessageAccepted = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    id: event.params.msgHash,
     blockNumber: BigInt(event.block.number),
     transactionHash: event.transaction.hash,
     blockTimestamp: BigInt(event.block.timestamp),
@@ -103,7 +103,7 @@ ORMP.MessageAssigned.handler(async ({ event, context }) => {
 
 ORMP.MessageDispatched.handler(async ({ event, context }) => {
   const entity: ORMP_MessageDispatched = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    id: event.params.msgHash,
     blockNumber: BigInt(event.block.number),
     transactionHash: event.transaction.hash,
     blockTimestamp: BigInt(event.block.timestamp),
